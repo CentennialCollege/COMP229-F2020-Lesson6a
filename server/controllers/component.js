@@ -14,7 +14,8 @@ module.exports.DisplayComponentList = (req, res, next) => {
         res.end()
       }
   
-      res.render('index', { title: 'Component List', components: data });
+      res.render('index', { title: 'Component List', components: data ,
+      displayName: req.user ? req.user.displayName : ''});
     });
     
   }
@@ -54,7 +55,8 @@ module.exports.DisplayEditPage = (req, res, next)=> {
             res.end(err);
         }
         // show the edit view
-        res.render('index', { title: 'Edit Component', data: ComponentToEdit });
+        res.render('index', { title: 'Edit Component', data: ComponentToEdit,
+        displayName: req.user ? req.user.displayName : '' });
     });
 }
 

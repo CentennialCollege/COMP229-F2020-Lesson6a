@@ -1,8 +1,9 @@
 let mongoose = require('mongoose');
-let Schema = mongoose.Schema; // alias
-let Model = mongoose.model; // alias
+let passportLocalMongoose = require('passport-local-mongoose');
+let Schema = mongoose.Schema;
+let Model = mongoose.model;
 
-let UserSchema = new Schema({
+let UserSchema = Schema({
    username: String,
    //password: string,
    email: String,
@@ -21,5 +22,11 @@ let UserSchema = new Schema({
 {
     collection: 'users'
 });
+
+// configure options for User Model
+
+let options = ({missingPasswordError: 'Wrong / Missing Password'});
+
+UserSchema.plugin(passportLocalMongoose, options);
 
 module.exports.Model = Model('User', UserSchema);

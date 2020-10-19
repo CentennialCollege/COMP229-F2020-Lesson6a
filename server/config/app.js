@@ -4,6 +4,21 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
+// modules for authentication
+let session = require('express-session');
+let passport = require('passport');
+
+// authentication strategy
+let passportLocal = require('passport-local');
+let localStrategy = passportLocal.Strategy; // Alias for the local strategy
+
+// authentication messaging
+let flash = require('connect-flash');
+
+// user model
+let user = require('../models/user')
+
+// Routing modules
 let indexRouter = require('../routes/index');
 let componentRouter = require('../routes/component');
 let usersRouter = require('../routes/users');
@@ -44,6 +59,31 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../../public')));
 app.use(express.static(path.join(__dirname, '../../node_modules')));
+
+// setup express session
+app.use(session({
+  secret: DB.Secret,
+  saveUninitialized: false,
+  resave: false
+}));
+
+// initialize flash
+app.use(flash());
+
+// initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// configure our user model
+let User = user.Model;
+
+// implement a User Auth Strategy
+passport.use(User.createStrategy());
+
+// serialize and deserialize the User info
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.use('/', indexRouter);
 app.use('/component-list', componentRouter);
